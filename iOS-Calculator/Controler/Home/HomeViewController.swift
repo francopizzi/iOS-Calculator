@@ -45,6 +45,7 @@ final class HomeViewController: UIViewController {
     private var total: Double = 0; //el total
     private var temp: Double = 0 //La que se muestra en pantalla en el label
     private var operating: Bool = false // Indica si se selecciono un operador
+    private var resultbtn : Bool = false
     private var decimal: Bool = false // para saber si se oprimio la ,
     private var operation: OperationType = .none //Operacion actual
     
@@ -135,8 +136,13 @@ final class HomeViewController: UIViewController {
     }
     
     @IBAction func operatorPlusMinusAction(_ sender: UIButton) {
-        temp = temp * (-1)
-        resultLabel.text = printFormatter.string(from: NSNumber(value: temp))
+        if (temp == 0) {
+            total = total * (-1)
+            resultLabel.text = printFormatter.string(from: NSNumber(value: total))
+        }else {
+            temp = temp * (-1)
+            resultLabel.text = printFormatter.string(from: NSNumber(value: temp))
+        }
         sender.shine()
     }
     
@@ -154,36 +160,41 @@ final class HomeViewController: UIViewController {
     }
     
     @IBAction func operatorResultAction(_ sender: UIButton) {
+        resultbtn = true
         result()
         sender.shine()
     }
     
     @IBAction func operatorAdditionAction(_ sender: UIButton) {
         // primero resuelvo la operacion pendiente y luego asigno la correspondiente a lo que presiono el usuario
-        result()
+        
         operating = true
         operation = .addiction
+        result()
         sender.shine()
     }
     
     @IBAction func operatorSubstractionAction(_ sender: UIButton) {
-        result()
+        
         operating = true
         operation = .substraction
+        result()
         sender.shine()
     }
     
     @IBAction func operatorMultiplicationAction(_ sender: UIButton) {
-        result()
+        
         operating = true
         operation = .multiplication
+        result()
         sender.shine()
     }
     
     @IBAction func operatorDivisionAction(_ sender: UIButton) {
-        result()
+        
         operating = true
         operation = .division
+        result()
         sender.shine()
     }
     
@@ -223,13 +234,15 @@ final class HomeViewController: UIViewController {
         // Hemos seleccionado decimales, para mantener el numero ejemplo
         // yo hice click en 5 pero antes tenia 4. entonces despues en pantalla tengo que ver 4.5
         if decimal {
-            currentTemp = "\(currentTemp)\(kDecimalSeparator)"
+            currentTemp = "\(currentTemp)."
             decimal = false
         }
         
         let number = sender.tag
-        
-        temp = Double(currentTemp + String(number))!
+        let aux = "\(currentTemp)\(String(number))"
+        if let myNoNilString = Double(aux) {
+            temp = myNoNilString
+        }
         resultLabel.text = printFormatter.string(from: NSNumber(value: temp))
         
         
@@ -258,7 +271,6 @@ final class HomeViewController: UIViewController {
         switch operation {
         case .none:
             // no hago nada
-            
         break
         case .addiction:
             //Tenemos que sumar
@@ -266,19 +278,31 @@ final class HomeViewController: UIViewController {
             break
         case .substraction:
             //Tenemos que restar
-            total = total - temp
+            if (total == 0) {
+                    total = temp
+            } else {
+                total = total - temp
+            }
             break
         case .multiplication:
             //Tenemos que multiplicar
-            total = total * temp
+            if (temp != 0) {
+                total = total * temp
+            }
             break
         case .division:
             //Tenemos que dividir
-            total = total / temp
+            if (temp != 0) {
+                total = total / temp
+            }
             break
         case .percent:
             //Tenemos que calcular el porcentaje
-            total = temp / 100
+            if (temp != 0) {
+                total = temp / 100
+            } else {
+                total = total / 100
+            }
             break
         }
         
@@ -288,5 +312,9 @@ final class HomeViewController: UIViewController {
             resultLabel.text = printFormatter.string(from: NSNumber(value: total))
         }
         print("TOTAL: \(total)")
+        if (resultbtn) {
+            temp = 0
+            resultbtn = false
+        }
     }
 }
