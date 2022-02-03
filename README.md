@@ -1,5 +1,4 @@
-# iOS-Calculator
-
+# iOS-Calculator 📱
 **My first app developed in Swift. It is a calculator, similar to native iOS calculator**
 
 *What mathematical operations can you do?*
